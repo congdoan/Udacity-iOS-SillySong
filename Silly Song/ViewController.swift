@@ -10,9 +10,13 @@ import UIKit
 
 class ViewController: UIViewController {
 
+    @IBOutlet weak var nameField: UITextField!
+    @IBOutlet weak var lyricsView: UITextView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        // Add the view controller instance as the delegate of the "name" text field
+        nameField.delegate = self
     }
 
     override func didReceiveMemoryWarning() {
@@ -20,6 +24,71 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
-
+    @IBAction func reset(_ sender: Any) {
+        nameField.text = ""
+        lyricsView.text = ""
+    }
+    
+    @IBAction func displayLyrics(_ sender: Any) {
+        let name = nameField.text!.trimmingCharacters(in: .whitespaces)
+        if name != "" {
+            lyricsView.text = lyricsForName(lyricsTemplate: bananaFanaTemplate, fullName: name)
+        }
+    }
+    
 }
+
+
+// MARK: - UITextFieldDelegate
+extension ViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        // Call resignFirstResponder to both hide keyboard and trigger text field’s “Editing Did End” event
+        textField.resignFirstResponder()
+        // Return false to prevent any other response to the return key
+        return false
+    }
+}
+
+
+//++ Helper functions
+func buildVowelSet() -> Set<Character> {
+    let baseVowels = "aeiou".characters
+    var allVowels: Set<Character> = []
+    for baseVowel in baseVowels {
+        allVowels.insert(baseVowel)
+        for combiningValue in 768...868 {
+            let combinedCharacter = "\(baseVowel)\(UnicodeScalar(combiningValue)!)"
+            allVowels.insert(combinedCharacter[combinedCharacter.startIndex])
+        }
+    }
+    return allVowels
+}
+
+let allVowels = buildVowelSet()
+
+func shortNameFromName(name: String) -> String {
+    let name = name.lowercased()
+    var index = name.startIndex
+    let endIndex = name.endIndex
+    while index != endIndex && !allVowels.contains(name[index]) {
+        index = name.index(after: index)
+    }
+    return (index != endIndex) ? String(name[index...]) : name
+}
+
+func lyricsForName(lyricsTemplate: String, fullName: String) -> String {
+    let shortName = shortNameFromName(name: fullName)
+    let lyrics = lyricsTemplate
+        .replacingOccurrences(of: "<FULL_NAME>", with: fullName)
+        .replacingOccurrences(of: "<SHORT_NAME>", with: shortName)
+    return lyrics
+}
+
+let bananaFanaTemplate = [
+    "<FULL_NAME>, <FULL_NAME>, Bo B<SHORT_NAME>",
+    "Banana Fana Fo F<SHORT_NAME>",
+    "Me My Mo M<SHORT_NAME>",
+    "<FULL_NAME>"].joined(separator: "\n")
+//--
+
 
