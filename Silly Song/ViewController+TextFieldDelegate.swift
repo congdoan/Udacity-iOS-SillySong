@@ -1,5 +1,5 @@
 //
-//  ViewControllerExtensions.swift
+//  ViewController+TextFieldDelegate.swift
 //  Silly Song
 //
 //  Created by Cong Doan on 10/6/17.
@@ -18,4 +18,3 @@ extension ViewController: UITextFieldDelegate {
         return false
     }
 }
-
