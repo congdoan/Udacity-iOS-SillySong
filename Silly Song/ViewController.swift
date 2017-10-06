@@ -8,6 +8,7 @@
 
 import UIKit
 
+
 class ViewController: UIViewController {
 
     @IBOutlet weak var nameField: UITextField!
@@ -31,17 +32,6 @@ class ViewController: UIViewController {
         }
     }
     
-}
-
-
-// MARK: - UITextFieldDelegate
-extension ViewController: UITextFieldDelegate {
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        // Call resignFirstResponder to both hide keyboard and trigger text field’s “Editing Did End” event
-        textField.resignFirstResponder()
-        // Return false to prevent any other response to the return key
-        return false
-    }
 }
 
 
